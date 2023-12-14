@@ -149,7 +149,7 @@ def add_comment(post_id):
     return redirect(url_for('home'))
 
 @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
-@login_required  # Require login for deleting
+@login_required 
 def delete_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
 
@@ -223,7 +223,6 @@ def logout():
     return redirect(url_for('home'))
 
 if __name__ == '__main__':
-    # Use app context to create the database tables
     with app.app_context():
         db.create_all()
 

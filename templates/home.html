@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MY PERSONAL BLOG</title>
+    <style>
+        .post-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+            position: relative; 
+        }
+
+        .comments-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .comment-item {
+            margin: 5px 0;
+        }
+
+        .delete-post-btn {
+            position: absolute;
+            top: 5px; 
+            right: 5px; 
+        }
+
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+        }
+
+        .navbar a {
+            float: right;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        .user-info {
+            float: left;
+            margin-top: 11px;
+            margin-left: 20px;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="user-info">
+            {% if current_user.is_authenticated %}
+            Welcome, {{ current_user.username }}! <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Register</a>
+        {% endif %}
+        </div>
+    </div>
+    <h1>MY PERSONAL BLOG</h1>
+
+    <form method="POST" action="{{ url_for('create_post') }}" style="margin-top: 20px; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
+        {{ post_form.hidden_tag() }}  
+
+        <div style="margin-bottom: 10px;">
+            <label for="title" style="font-weight: bold;">Title:</label>
+            {{ post_form.title(size=40) }}
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <label for="content" style="font-weight: bold;">Content:</label>
+            {{ post_form.content(size=40) }}
+        </div>
+
+        <button type="submit" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Create Post</button>
+    </form>
+  
+    {% for post in post %}
+        <div class="post-box">
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.content|e }}</p>
+
+            <h3>Comments:</h3>
+            <ul class="comments-list">
+                {% for comment in post.comments %}
+                    <li class="comment-item"> {{ comment.content }}
+                        <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}" style="display: inline;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit">Delete Comment</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+            
+            <form method="POST" action="{{ url_for('add_comment', post_id=post.id) }}">
+                {{ comment_form.hidden_tag() }}
+                {{ comment_form.comment_content.label }} {{ comment_form.comment_content(size=20) }}<br>
+                <input type="submit" value="Add Comment">
+            </form>
+            <a href="{{ url_for('post', post_id=post.id) }}">Read more</a>
+
+            <form method="POST" action="{{ url_for('delete_post', post_id=post.id) }}" class="delete-post-btn" style="display: inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit">Delete Post</button>
+            </form>
+        </div>
+    {% endfor %}   
+    
+</body>
+</html>

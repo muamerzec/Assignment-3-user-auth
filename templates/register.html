@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: auto;
+            margin-top: 100px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        #totp-qrcode {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #totp-qrcode img {
+            width: 150px;  
+            height: 150px; 
+        }
+
+        #login-btn {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                Register
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form.username.label(class="col-form-label") }}
+                        {{ form.username(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.password.label(class="col-form-label") }}
+                        {{ form.password(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.confirm_password.label(class="col-form-label") }}
+                        {{ form.confirm_password(class="form-control") }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </form>
+
+                {% if totp_qr_code %}
+                    <div id="totp-qrcode">
+                        <h5>Scan the QR code below with your authenticator app:</h5>
+                        <img src="data:image/png;base64,{{ totp_qr_code }}" alt="TOTP QR Code">
+                    </div>
+                    <div id="login-btn">
+                        <a href="{{ url_for('login') }}" class="btn btn-primary">Go to Login</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
